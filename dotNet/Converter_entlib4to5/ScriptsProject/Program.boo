@@ -2,7 +2,7 @@
 
 import System
 
-rootPath = """C:\Users\Octavio\Documents\Projects\RealCMS.dotNet4"""
+rootPath = """C:\Path\To\Project"""
 CheckFluorineReferences(rootPath)
 
 print "Press any key to continue . . . "
