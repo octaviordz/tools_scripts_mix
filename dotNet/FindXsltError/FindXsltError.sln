@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.2.0.8649-Beta 2
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "FindXsltError", "FindXsltError\FindXsltError.booproj", "{687C8C9A-3946-45CD-A5DC-691E7AB5DACD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{687C8C9A-3946-45CD-A5DC-691E7AB5DACD}.Debug|x86.Build.0 = Debug|x86
+		{687C8C9A-3946-45CD-A5DC-691E7AB5DACD}.Debug|x86.ActiveCfg = Debug|x86
+		{687C8C9A-3946-45CD-A5DC-691E7AB5DACD}.Release|x86.Build.0 = Release|x86
+		{687C8C9A-3946-45CD-A5DC-691E7AB5DACD}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+EndGlobal
