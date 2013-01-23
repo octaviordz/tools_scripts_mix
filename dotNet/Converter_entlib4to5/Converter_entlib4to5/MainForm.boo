@@ -179,11 +179,11 @@ partial class MainForm:
 		#[assembly: AssemblyFileVersion("1.0.0.0")]
 		changes = 0
 		for line in lines:		
-			if line == '[assembly: AssemblyVersion("2.0.0.0")]':
-				line = '[assembly: AssemblyVersion("2.5.0.0")]'
+			if line == '[assembly: AssemblyVersion("2.5.0.0")]':
+				line = '[assembly: AssemblyVersion("2.5.1.0")]'
 				changes += 1				
-			elif line == '[assembly: AssemblyFileVersion("2.0.0.0")]':
-				line = '[assembly: AssemblyFileVersion("2.5.0.0")]'
+			elif line == '[assembly: AssemblyFileVersion("2.5.0.0")]':
+				line = '[assembly: AssemblyFileVersion("2.5.1.0")]'
 				changes += 1
 				
 		System.IO.File.WriteAllLines(path, lines)
