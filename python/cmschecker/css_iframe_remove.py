@@ -4,9 +4,8 @@ import datetime
 import re
 import tinycss
 
-search_path = 'C:\\RTS\\Webs'
-#search_path = 'C:\\Users\\orc\\Documents\\Projects\\RealCMS.git\\Website'
-REMOVE_ISSUE = True
+search_path = 'C:\\[your path]'
+REMOVE_ISSUE = False
 
 LOG_FILENAME = str(datetime.date.today())+'-css.log'
 console_handler = logging.StreamHandler()
@@ -108,7 +107,7 @@ def check_iframe_problem(filepath, remove = False):
     def _height(rule, declaration):
         if declaration.name == 'height':
             for token in declaration.value:
-                if token.as_css() == '100px':
+                if token.as_css() == '100px' or token.as_css() == '100%':
                     return True
         return False
     
@@ -119,7 +118,6 @@ def check_iframe_problem(filepath, remove = False):
     
     def parse(text, lines):
         result = 'ok'
-        #try:            
         p = tinycss.make_parser('page3')            
         stylesheet = p.parse_stylesheet(text)            
         for rule in stylesheet.rules:
@@ -135,7 +133,7 @@ def check_iframe_problem(filepath, remove = False):
                         result = 'error'
                     else:
                         declist.remove(declaration)
-                if declist and len(rule.declarations) > len(declist):
+                if len(rule.declarations) > len(declist):
                     #if there are delcarations that are not issues
                     #we don't remove the whole rule
                     for d in declist:
@@ -146,34 +144,37 @@ def check_iframe_problem(filepath, remove = False):
                         #print(line, d.column, column)
                         removelist.append(EndToken(line, column, d))
                 else:
-                    last = rule.declarations[-1]
-                    end = find_rule_end(lines, last.line, last.column)
+                    if rule.declarations:
+                        last = rule.declarations[-1]
+                        end = find_rule_end(lines, last.line, last.column)
+                    else:
+                        end = find_rule_end(lines, rule.line, rule.column)
                     if end:
                         #print(end)
                         line, column = end
                         removelist.append(RuleEndToken(line, column, rule))
                     else:
                         raise ValueError()
-        #except tinycss.parsing.ParseError as ex:
-        #    log.warn('Error: parsing: %s %s' % (filepath, ex))
-        #finally:
         return result
-    
-    with open(filepath, 'r+', encoding='utf-8') as f:
-        text = f.read()
-        lines = text.split('\n')
-        result = parse(text, lines)
-        if result != 'ok' and remove:
-            ntext = new_text(text, lines, removelist)
-            f.seek(0)
-            f.truncate()
-            f.write(ntext)
-            f.flush()
-            newfilepath = filepath+'.iframe-issue-'+str(datetime.date.today())
-            print(newfilepath)
-            with open(newfilepath, 'w+', encoding='utf-8') as f:
-                f.write(text)
+    result = 'ok'
+    try:
+        with open(filepath, 'r+') as f:
+            text = f.read()
+            lines = text.split('\n')
+            result = parse(text, lines)
+            if result == 'error' and remove:
+                ntext = new_text(text, lines, removelist)            
+                newfilepath = filepath+'.issue-'+str(datetime.date.today())+'.back'
+                print(newfilepath)
+                with open(newfilepath, 'w+') as outf:
+                    outf.write(text)
+                    outf.flush()
+                f.seek(0)
+                f.truncate()
+                f.write(ntext)
                 f.flush()
+    except (IOError, UnicodeDecodeError)as ex:
+        log.error('Error: reading file: %s %s' % (filepath, ex))
     return result
         
 def _print(path, logFun):    
@@ -189,15 +190,24 @@ def _print_error(path):
     _print(path, log.error)    
         
 if __name__ == '__main__':
-    logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG)    
+    logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG)
+    checked_count = 0
+    css_count = 0
+    issue_count = 0
     for dirpath, dirnames, filenames in os.walk(search_path, topdown=True):
         for filename in filenames:
             name, ext = os.path.splitext(filename)
+            checked_count += 1
             if ext.lower() == '.css':
+                css_count += 1
                 #log.info('CSS file found at:%s' % dirpath)
                 fullpath = os.path.join(dirpath, filename)
                 result = check_iframe_problem(fullpath, REMOVE_ISSUE)
+                if result != 'ok':
+                    issue_count += 1
                 if result == 'error':
                     _print_error(fullpath)
                 elif result == 'warn':
                     _print_warn(fullpath)
+    log.info(str.format('Files checked:{} css:{} with issue:{}', checked_count,
+                        css_count, issue_count))
