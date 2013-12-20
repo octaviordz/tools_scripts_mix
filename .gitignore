@@ -27,3 +27,8 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+python/venv/*
+*.pyc
+.project
+.pydevproject
+.settings/
