@@ -4,7 +4,6 @@ import os
 import logging
 import datetime
 import re
-import collections
 import cssselect
 import tinycss2
 import collections
@@ -105,7 +104,8 @@ def _consume_rule(first_token, tokens):
 def parse_at_rule(rule):
     #print(rule.at_keyword)
     #print(rule.content)
-    tokens = iter(rule.content)
+    _tokens = rule.content or ()  
+    tokens = iter(_tokens)
     content_rules = [_consume_rule(token, tokens) for token in tokens
             if token.type != 'whitespace']
     process_result_list(content_rules)

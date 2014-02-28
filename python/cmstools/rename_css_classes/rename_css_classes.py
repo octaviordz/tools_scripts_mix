@@ -17,8 +17,8 @@ TEMPLATES_PATH = 'C:\\[your path]'
 
 CSS_CLASS_REALM = 'rc-admin-realm'
 CSS_CLASS_PREFIX = 'rc-admin-'
-CSS_ELEMENT_CSS_CLASS= 'rc-admin'
-_PERFORM_UPDATE = True
+CSS_ELEMENT_POSTFIX= '-rc-admin'
+_PERFORM_UPDATE = False
 _UPDATE_ELEMENT_SELECTORS = False
 _UPDATE_JS = False
 
@@ -78,12 +78,11 @@ def replace_func_css_class(match):
 def replace_func_css_element(match):
         mgroup = match.group(0)
         element = match.group(1)
-        diff = mgroup.replace(element, '', 1)
-        new_selector = ''.join([element, '.', CSS_ELEMENT_CSS_CLASS, diff])
-        return new_selector
+        new_text = mgroup.replace(element, ''.join(['.', element, CSS_ELEMENT_POSTFIX]), 1)
+        return new_text
     
 def replace_text_css(text, css_classes, css_element_selectors, css_ids):
-    #TODO: realm = ''.join(['.', CSS_CLASS_REALM])    
+    #TODO: realm = ''.join(['.', CSS_CLASS_REALM])
     for css_class in css_classes:
         prefindex = css_class.find(CSS_CLASS_PREFIX)
         if prefindex != -1:
@@ -97,11 +96,11 @@ def replace_text_css(text, css_classes, css_element_selectors, css_ids):
     #input.rc-admin.rc-admin-span11,
     if _UPDATE_ELEMENT_SELECTORS:
         for element_selector in css_element_selectors:
-            pefindex = element_selector.find(CSS_ELEMENT_CSS_CLASS)
+            pefindex = element_selector.find(CSS_ELEMENT_POSTFIX)
             if pefindex == 0 or pefindex == 1:
                 continue
-            regex = ''.join([r'\b(', element_selector, r'\b)[^\.-:;\w]'])
-            #new_selector = ''.join([element_selector, '.', CSS_ELEMENT_CSS_CLASS])
+            regex = ''.join([r'(?:\A|[^\-\w])(', element_selector, r')([^-:;\w]|:{1,2}[\w-]+[\s]*,|:{1,2}[\w-]+[\s]*{)'])
+            #new_selector = ''.join([element_selector, '.', CSS_ELEMENT_POSTFIX])
             #print('"%s"  %s' % (new_selector, regex))
             text = re.sub(regex, replace_func_css_element, text)
     #for css_id in css_ids:
@@ -187,6 +186,9 @@ def check_template_file(filepath, rename_list, update = False):
 
 
 def check_template_files(path, update = False):
+    """
+    Check angular template files (html view files).
+    """
     rename_list = []
     with open('rename_list.csv', 'rb') as csv_file:
         reader = csv.reader(csv_file)
@@ -219,7 +221,7 @@ if __name__ == '__main__':
     log = logging.getLogger(__name__)
     log.addHandler(console_handler)
     logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG)
-    #check_css_file(CSS_FILE_PATH, _PERFORM_UPDATE)
+    check_css_file(CSS_FILE_PATH, _PERFORM_UPDATE)
     check_template_files(TEMPLATES_PATH, _PERFORM_UPDATE)
     #check_template_files(JS_FILE_PATH, _UPDATE_JS)    
     #log.info(str.format(
