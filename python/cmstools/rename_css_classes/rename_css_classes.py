@@ -99,7 +99,7 @@ def replace_text_css(text, css_classes, css_element_selectors, css_ids):
             pefindex = element_selector.find(CSS_ELEMENT_POSTFIX)
             if pefindex == 0 or pefindex == 1:
                 continue
-            regex = ''.join([r'(?:\A|[^\-\w])(', element_selector, r')([^-:;\w]|:{1,2}[\w-]+[\s]*,|:{1,2}[\w-]+[\s]*{)'])
+            regex = ''.join([r'(?:\A|[^\-\w])(', element_selector, r')([^-:;(\w]|:{1,2}[\w-]+[\s]*,|:{1,2}[\w-]+[\s]*{)'])
             #new_selector = ''.join([element_selector, '.', CSS_ELEMENT_POSTFIX])
             #print('"%s"  %s' % (new_selector, regex))
             text = re.sub(regex, replace_func_css_element, text)
@@ -123,8 +123,9 @@ def check_css_file(filepath, should_update = False):
             wr.writerows(rename_list)
         return result_list
     def update(text, processed):
-        result_list = processed
-        parser.process_result_list(result_list)
+        #todo: remove the parser.CSS_{globals} use
+        #result_list = processed
+        #parser.process_result_list(result_list)
         ntext = replace_text_css(
              text,
              parser.CSS_CLASSES, 
