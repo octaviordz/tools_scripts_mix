@@ -32,3 +32,5 @@ python/venv/*
 .project
 .pydevproject
 .settings/
+dotNet/cmsexperimental/packages/
+dotNet/cmsexperimental/cmstool/packages/
